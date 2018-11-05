@@ -23,6 +23,16 @@ pip3 install --upgrade pip
 #~/miniconda3/bin/conda install openblas
 
 # Install Bazel
+# Set up Bazel.
+
+# Running bazel inside a `docker build` command causes trouble, cf:
+# https://github.com/bazelbuild/bazel/issues/134
+# The easiest solution is to set up a bazelrc file forcing --batch.
+echo "startup --batch" >>/etc/bazel.bazelrc
+# Similarly, we need to workaround sandboxing issues:
+# https://github.com/bazelbuild/bazel/issues/418
+echo "build --spawn_strategy=standalone --genrule_strategy=standalone" >>/etc/bazel.bazelrc
+
 apt-get install -y build-essential openjdk-8-jdk python zip unzip
 cd ~
 wget https://github.com/bazelbuild/bazel/releases/download/0.15.0/bazel-0.15.0-dist.zip
@@ -39,8 +49,11 @@ apt-get install -y python-dev python-pip python-wheel python3-numpy python3-dev 
 #apt-get install python-h5py
 apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
 apt-get install -y libhdf5-10 libhdf5-serial-dev libhdf5-dev libhdf5-cpp-11
+apt-get install -y  libnccl2=2.1.15-1+cuda9.1 libnccl-dev=2.1.15-1+cuda9.1
 pip3 install wheel
+
 #export CPATH="/usr/include/hdf5/serial/hdf5.h"
+export CPATH="/usr/include/hdf5/serial/"
 find . -type f -exec sed -i -e 's^"hdf5.h"^"hdf5/serial/hdf5.h"^g' -e 's^"hdf5_hl.h"^"hdf5/serial/hdf5_hl.h"^g' '{}' \;
 ln -s /usr/lib/powerpc64le-linux-gnu/libhdf5_serial.so.10 /usr/lib/powerpc64le-linux-gnu/libhdf5.so
 ln -s /usr/lib/powerpc64le-linux-gnu/libhdf5_serial_hl.so.10 /usr/lib/powerpc64le-linux-gnu/libhdf5_hl.so
@@ -53,7 +66,21 @@ cd tensorflow
 git checkout r1.11
 
 export PATH="$PATH:$HOME/bin"
-bazel build //tensorflow/tools/pip_package:build_pip_package
+# Configure the build for our CUDA configuration.
+ENV CI_BUILD_PYTHON python
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+ENV TF_NEED_CUDA 1
+ENV TF_NEED_TENSORRT 1
+ENV TF_CUDA_COMPUTE_CAPABILITIES=3.5,5.2,6.0,6.1,7.0
+ENV TF_CUDA_VERSION=9.1
+ENV TF_CUDNN_VERSION=7
+
+# NCCL 2.x
+ENV TF_NCCL_VERSION=2
+
+#cp /root/.tf_configure.bazelrc /root/tensorflow
+tensorflow/tools/ci_build/builds/configured GPU
+bazel build -c opt --copt=-mavx --config=cuda --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" //tensorflow/tools/pip_package:build_pip_package
 bazel-bin/tensorflow/tools/pip_package/build_pip_package ../tensorflow_pkg
 cd ~/tensorflow_pkg/
 pip3 install tensorflow-1.11.0-cp35-cp35m-linux_ppc64le.whl
