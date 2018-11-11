@@ -4,13 +4,15 @@ Docker image for IBM Power8 which contain GPUs.
 Contains widely used Python libraries such as:
 * TensorFlow (r1.12)
 * Keras
-* Turicreate
 * numpy               
 * pandas
 * sklearn
 * sympy
 * scipy 
 * matplotlib
+* requests
+
+And for interacting with the container Jupyter was pre-installed.
 
 For using you need to perform following commands:
 ```
