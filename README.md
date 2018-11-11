@@ -2,7 +2,7 @@
 Docker image for IBM Power8 which contain GPUs.
 
 Contains widely used Python libraries such as:
-* TensorFlow (r1.11)
+* TensorFlow (r1.12)
 * Keras
 * Turicreate
 * numpy               
