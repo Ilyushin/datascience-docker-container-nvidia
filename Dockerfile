@@ -37,7 +37,7 @@ RUN cd ~ && rm tensorflow_gpu-1.12.0-cp36-cp36m-linux_ppc64le.whl
 RUN apt-get install -y build-essential libzmq3-dev
 RUN pip3 install pyzmq
 RUN pip3 install jupyter
-RUN pip3 install requests
+RUN pip3 install requests tqdm
 
 #RUN cd ~ && \
 #    wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.1.0-Linux-ppc64le.sh -O ~/anaconda.sh && \
