@@ -1,4 +1,4 @@
-FROM nvidia/cuda-ppc64le:9.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda-ppc64le:9.1-cudnn7-devel-ubuntu16.04
 LABEL maintainer="Eugene Ilyushin <eugene.ilyushin@gmail.com>"
 
 RUN apt-get update && apt-get upgrade -y && \
@@ -25,14 +25,11 @@ RUN find . -type f -exec sed -i -e 's^"hdf5.h"^"hdf5/serial/hdf5.h"^g' -e 's^"hd
     ln -s /usr/lib/powerpc64le-linux-gnu/libhdf5_serial_hl.so.10 /usr/lib/powerpc64le-linux-gnu/libhdf5_hl.so && \
     pip3 --no-cache-dir  install h5py
 
-RUN apt-get install -y libfreetype6-dev pkg-config libpng12-dev
+#RUN apt-get install -y libfreetype6-dev pkg-config libpng12-dev
 RUN pip3 install numpy keras pandas sklearn sympy scipy matplotlib
 
-RUN cd ~ && \
-    wget https://powerci.osuosl.org/job/TensorFlow_PPC64LE_GPU_Release_Build/lastSuccessfulBuild/artifact/tensorflow_pkg/tensorflow_gpu-1.12.0-cp36-cp36m-linux_ppc64le.whl
-
-RUN cd ~ && pip3 install tensorflow_gpu-1.12.0-cp36-cp36m-linux_ppc64le.whl
-RUN cd ~ && rm tensorflow_gpu-1.12.0-cp36-cp36m-linux_ppc64le.whl
+COPY ./tensorflow_distr/tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl /root
+RUN cd ~ && pip3 install tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl && rm tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl
 
 RUN apt-get install -y build-essential libzmq3-dev
 RUN pip3 install pyzmq
@@ -46,8 +43,7 @@ RUN pip3 install requests tqdm
 #    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
 #    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
 #    echo "conda activate base" >> ~/.bashrc
-
-#CMD [ "/bin/bash" ]
+#
 
 COPY start-notebook.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start-notebook.sh
