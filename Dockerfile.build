@@ -1,4 +1,4 @@
-FROM nvidia/cuda-ppc64le:9.1-cudnn7-devel-ubuntu16.04
+FFROM nvidia/cuda-ppc64le:9.1-cudnn7-devel-ubuntu16.04
 LABEL maintainer="Eugene Ilyushin <eugene.ilyushin@gmail.com>"
 
 RUN apt-get update && apt-get upgrade -y && \
@@ -44,9 +44,5 @@ RUN apt-get update --fix-missing && apt-get upgrade -y && \
 RUN cd ~ && git clone https://github.com/tensorflow/tensorflow
 RUN cd ~/tensorflow && \
     git checkout r1.11
-
-RUN cd ~/tensorflow && yes "" | ./configure
-
-COPY .tf_configure.bazelrc /root/tensorflow
 
 CMD ["/bin/bash"]

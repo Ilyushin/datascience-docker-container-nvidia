@@ -28,7 +28,7 @@ RUN find . -type f -exec sed -i -e 's^"hdf5.h"^"hdf5/serial/hdf5.h"^g' -e 's^"hd
 #RUN apt-get install -y libfreetype6-dev pkg-config libpng12-dev
 RUN pip3 install numpy keras pandas sklearn sympy scipy matplotlib
 
-COPY ./tensorflow_distr/tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl /root
+RUN cd ~ && wget https://ilyushin.science/distr/tensorflow/power8/tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl
 RUN cd ~ && pip3 install tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl && rm tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl
 
 RUN apt-get install -y build-essential libzmq3-dev

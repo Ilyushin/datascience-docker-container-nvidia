@@ -30,19 +30,20 @@ nvidia-docker run -it -d -p 8888:8888 -p 7007:7007 ilyushin/datascience-containe
     
 
 ### How to build your version of TensorFlow:
-1. If you need another version of CUDA and cuDNN, you should change the first line in Dockerfile.build and set appropriate version.
-    Also, you should set needed parameters in **.tf_configure.bazelrc**
+1. If you need another version of CUDA and cuDNN, you should change the first line in Dockerfile.build
 1. Bild an image
     ```bash
-    nvidia-docker build -f Dockerfile.build -t ilyushin/datascience-container-nvidia-build:latest
+    nvidia-docker build -f Dockerfile.build . -t ilyushin/datascience-container-nvidia-build:latest
     ```
 2. Run the container and connect to it
     ```bash
-    nvidia-docker run -it --name build-tensorflow ilyushin/datascience-container-nvidia-build:latest bash
+    nvidia-docker run -it -d --name build-tensorflow ilyushin/datascience-container-nvidia-build:latest
+    docker exec -it build-tensorflow bash 
     ```
 3. Build TensorFlow
     ```bash
     cd ~/tensorflow
+    ./configure
     bazel --bazelrc=/root/tensorflow/.tf_configure.bazelrc build -c opt //tensorflow/tools/pip_package:build_pip_package
     bazel-bin/tensorflow/tools/pip_package/build_pip_package ../tensorflow_pkg
     ``` 
