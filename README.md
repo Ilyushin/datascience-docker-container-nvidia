@@ -21,7 +21,7 @@ nvidia-docker build . -t ilyushin/datascience-container-nvidia:latest
 nvidia-docker run -it -d -p 8888:8888 -p 7007:7007 ilyushin/datascience-container-nvidia bash
 ```
 
-**The folder "tensorflow_distr" contains prebuilt packages of TensorFlow:**
+**Current version of TensorFlow was built in following environment:**
 * tensorflow-1.11.0-cp36-cp36m-linux_ppc64le.whl requires:
     * Python 3.6.7 
     * GPU architectures Kepler, Maxwell, Pascal and Volta
